@@ -2,7 +2,7 @@
   max-width: 1120px;
   margin: 0 auto;
   padding: 32px 16px 40px;
-  color: #e5e7eb;
+  color: #0f172a;
 }
 
 .tw-app--center {
@@ -24,7 +24,7 @@
   margin: 0;
   font-size: 28px;
   letter-spacing: -0.03em;
-  color: #f9fafb;
+  color: #0f172a;
 }
 
 .tw-brand-link {
@@ -32,10 +32,38 @@
   color: inherit;
 }
 
+.tw-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tw-logo-wrap {
+  width: 52px;
+  height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 52px;
+}
+
+.tw-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 12px;
+}
+
+.tw-brand-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .tw-subtitle {
-  margin: 4px 0 0;
+  margin: 2px 0 0;
   font-size: 14px;
-  color: #9ca3af;
+  color: #475569;
 }
 
 .tw-header-user {
@@ -46,7 +74,7 @@
 
 .tw-user-email {
   font-size: 13px;
-  color: #d1d5db;
+  color: #475569;
 }
 
 .tw-main {
@@ -70,20 +98,23 @@
 }
 
 .tw-card {
-  background: radial-gradient(circle at top left, #111827, #020617);
+  background: rgba(255, 255, 255, 0.9);
   border-radius: 18px;
-  border: 1px solid rgba(148, 163, 184, 0.3);
-  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
   padding: 18px 18px 16px;
+  backdrop-filter: blur(10px);
 }
 
 .tw-card--auth {
   max-width: 420px;
   width: 100%;
+  background: linear-gradient(135deg, rgba(239, 246, 255, 0.98), rgba(224, 242, 254, 0.98));
 }
 
 .tw-card--summary {
   min-height: 180px;
+  background: linear-gradient(135deg, rgba(240, 253, 250, 0.98), rgba(219, 234, 254, 0.98));
 }
 
 .tw-card--full {
@@ -92,6 +123,7 @@
 
 .tw-card--table {
   margin-top: 4px;
+  background: radial-gradient(circle at top left, rgba(248, 250, 252, 0.98), #ffffff);
 }
 
 .tw-card--charts {
@@ -105,13 +137,13 @@
 .tw-card-header h2 {
   margin: 0;
   font-size: 18px;
-  color: #e5e7eb;
+  color: #0f172a;
 }
 
 .tw-card-header p {
   margin: 4px 0 0;
   font-size: 13px;
-  color: #9ca3af;
+  color: #64748b;
 }
 
 .tw-card-header--with-controls {
@@ -151,15 +183,15 @@
 
 .tw-field span {
   font-size: 12px;
-  color: #9ca3af;
+  color: #475569;
 }
 
 .tw-field input,
 .tw-field select {
   border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.6);
-  background: rgba(15, 23, 42, 0.9);
-  color: #e5e7eb;
+  border: 1px solid rgba(148, 163, 184, 0.75);
+  background: rgba(255, 255, 255, 0.9);
+  color: #0f172a;
   padding: 8px 11px;
   font-size: 13px;
   outline: none;
@@ -167,14 +199,14 @@
 }
 
 .tw-field input::placeholder {
-  color: #6b7280;
+  color: #94a3b8;
 }
 
 .tw-field input:focus,
 .tw-field select:focus {
   border-color: #38bdf8;
-  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.8);
-  background: rgba(15, 23, 42, 0.98);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+  background: rgba(255, 255, 255, 1);
 }
 
 .tw-form-actions {
@@ -203,25 +235,25 @@
 }
 
 .tw-button--primary {
-  background: linear-gradient(135deg, #38bdf8, #22c55e);
-  color: #020617;
-  box-shadow: 0 14px 30px rgba(34, 197, 94, 0.45);
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
+  color: #ffffff;
+  box-shadow: 0 12px 26px rgba(37, 99, 235, 0.25);
 }
 
 .tw-button--primary:hover:not(:disabled) {
   transform: translateY(-0.5px);
-  box-shadow: 0 18px 40px rgba(34, 197, 94, 0.55);
+  box-shadow: 0 16px 34px rgba(37, 99, 235, 0.3);
 }
 
 .tw-button--ghost {
-  background: rgba(15, 23, 42, 0.4);
-  border: 1px solid rgba(148, 163, 184, 0.7);
-  color: #e5e7eb;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.9);
+  color: #0f172a;
   padding-inline: 12px;
 }
 
 .tw-button--ghost:hover {
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(241, 245, 249, 1);
 }
 
 .tw-link-button {
@@ -246,22 +278,22 @@
 }
 
 .tw-alert--error {
-  background: rgba(248, 113, 113, 0.12);
-  border: 1px solid rgba(248, 113, 113, 0.75);
-  color: #fecaca;
+  background: rgba(254, 226, 226, 0.8);
+  border: 1px solid rgba(248, 113, 113, 0.65);
+  color: #991b1b;
 }
 
 .tw-alert--info {
-  background: rgba(56, 189, 248, 0.12);
-  border: 1px solid rgba(56, 189, 248, 0.75);
-  color: #bae6fd;
+  background: rgba(224, 242, 254, 0.9);
+  border: 1px solid rgba(56, 189, 248, 0.55);
+  color: #075985;
 }
 
 .tw-auth-switch {
   margin-top: 10px;
   text-align: center;
   font-size: 13px;
-  color: #9ca3af;
+  color: #64748b;
 }
 
 .tw-summary-grid {
@@ -274,13 +306,13 @@
 .tw-summary-item {
   padding: 8px 10px;
   border-radius: 14px;
-  background: rgba(15, 23, 42, 0.9);
-  border: 1px solid rgba(31, 41, 55, 0.9);
+  background: rgba(248, 250, 252, 1);
+  border: 1px solid rgba(148, 163, 184, 0.35);
 }
 
 .tw-summary-label {
   font-size: 11px;
-  color: #9ca3af;
+  color: #64748b;
 }
 
 .tw-summary-value {
@@ -291,19 +323,19 @@
 }
 
 .tw-summary-value--income {
-  color: #4ade80;
+  color: #16a34a;
 }
 
 .tw-summary-value--expense {
-  color: #f97373;
+  color: #dc2626;
 }
 
 .tw-summary-value--positive {
-  color: #a3e635;
+  color: #16a34a;
 }
 
 .tw-summary-value--negative {
-  color: #fb7185;
+  color: #dc2626;
 }
 
 .tw-charts-controls {
@@ -320,9 +352,9 @@
 
 .tw-select-inline {
   border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.7);
-  background: rgba(15, 23, 42, 0.9);
-  color: #e5e7eb;
+  border: 1px solid rgba(148, 163, 184, 0.75);
+  background: rgba(255, 255, 255, 0.95);
+  color: #0f172a;
   padding: 5px 10px;
   font-size: 12px;
 }
@@ -335,16 +367,16 @@
 }
 
 .tw-chart-card {
-  background: radial-gradient(circle at top left, #020617, #020617);
+  background: rgba(248, 250, 252, 1);
   border-radius: 16px;
-  border: 1px solid rgba(31, 41, 55, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.35);
   padding: 12px 14px 10px;
 }
 
 .tw-chart-title {
   margin: 0 0 8px;
   font-size: 14px;
-  color: #e5e7eb;
+  color: #0f172a;
 }
 
 .tw-chart-inner {
@@ -353,14 +385,21 @@
 }
 
 .tw-chart-inner--pie {
-  height: 220px;
+  height: 320px;
 }
 
 .tw-table-wrapper {
   margin-top: 4px;
   border-radius: 14px;
-  border: 1px solid rgba(31, 41, 55, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.35);
   overflow: auto;
+}
+
+.tw-table-wrapper--transactions {
+  /* Keep charts visible: show ~15 rows, scroll inside table */
+  max-height: 560px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .tw-table {
@@ -370,13 +409,13 @@
 }
 
 .tw-table thead {
-  background: rgba(15, 23, 42, 0.96);
+  background: rgba(241, 245, 249, 1);
 }
 
 .tw-table th,
 .tw-table td {
   padding: 9px 12px;
-  border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.25);
   white-space: nowrap;
 }
 
@@ -385,7 +424,7 @@
   font-size: 11px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #9ca3af;
+  color: #475569;
 }
 
 .tw-table th.tw-text-right,
@@ -394,21 +433,21 @@
 }
 
 .tw-table tbody tr:nth-child(even) {
-  background: rgba(15, 23, 42, 0.8);
+  background: rgba(255, 255, 255, 1);
 }
 
 .tw-table tbody tr:nth-child(odd) {
-  background: rgba(15, 23, 42, 0.95);
+  background: rgba(248, 250, 252, 1);
 }
 
 .tw-table tbody tr:hover {
-  background: rgba(30, 64, 175, 0.55);
+  background: rgba(219, 234, 254, 0.75);
 }
 
 .tw-empty-row {
   text-align: center;
   font-size: 13px;
-  color: #9ca3af;
+  color: #64748b;
 }
 
 .tw-text-right {
@@ -426,13 +465,13 @@
 }
 
 .tw-badge--income {
-  background: rgba(34, 197, 94, 0.15);
-  color: #bbf7d0;
+  background: rgba(34, 197, 94, 0.12);
+  color: #166534;
 }
 
 .tw-badge--expense {
-  background: rgba(248, 113, 113, 0.16);
-  color: #fecaca;
+  background: rgba(239, 68, 68, 0.12);
+  color: #991b1b;
 }
 
 .tw-amount {
@@ -441,11 +480,11 @@
 }
 
 .tw-amount--income {
-  color: #4ade80;
+  color: #16a34a;
 }
 
 .tw-amount--expense {
-  color: #f97373;
+  color: #dc2626;
 }
 
 .tw-filter-group {
@@ -454,8 +493,8 @@
   gap: 6px;
   padding: 2px;
   border-radius: 999px;
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(31, 41, 55, 0.9);
+  background: rgba(241, 245, 249, 1);
+  border: 1px solid rgba(148, 163, 184, 0.35);
 }
 
 .tw-chip {
@@ -463,40 +502,40 @@
   border: none;
   padding: 4px 10px;
   font-size: 11px;
-  color: #9ca3af;
+  color: #475569;
   background: transparent;
   cursor: pointer;
   transition: background-color 0.14s ease, color 0.14s ease, box-shadow 0.14s ease;
 }
 
 .tw-chip--active {
-  color: #020617;
-  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.9);
+  color: #0f172a;
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.55);
 }
 
 .tw-chip--all {
-  background: linear-gradient(135deg, #38bdf8, #a855f7);
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.18), rgba(6, 182, 212, 0.18));
 }
 
 .tw-chip--income {
-  background: linear-gradient(135deg, #22c55e, #4ade80);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.16), rgba(16, 185, 129, 0.16));
 }
 
 .tw-chip--expense {
-  background: linear-gradient(135deg, #f97316, #fb7185);
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.16), rgba(249, 115, 22, 0.16));
 }
 
 .tw-chip--deleted {
-  background: linear-gradient(135deg, #6b7280, #4b5563);
+  background: linear-gradient(135deg, rgba(100, 116, 139, 0.16), rgba(148, 163, 184, 0.16));
 }
 
 .tw-icon-button {
   width: 26px;
   height: 26px;
   border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.9);
-  background: rgba(15, 23, 42, 0.9);
-  color: #e5e7eb;
+  border: 1px solid rgba(148, 163, 184, 0.65);
+  background: rgba(255, 255, 255, 1);
+  color: #0f172a;
   cursor: pointer;
   font-size: 13px;
   display: inline-flex;
@@ -506,17 +545,17 @@
 }
 
 .tw-icon-button:hover {
-  background: rgba(148, 27, 62, 0.8);
-  border-color: rgba(248, 113, 113, 0.85);
+  background: rgba(254, 226, 226, 1);
+  border-color: rgba(248, 113, 113, 0.65);
 }
 
 .tw-icon-button--edit {
-  border-color: rgba(59, 130, 246, 0.9);
+  border-color: rgba(59, 130, 246, 0.55);
 }
 
 .tw-icon-button--edit:hover {
-  background: rgba(59, 130, 246, 0.2);
-  border-color: rgba(59, 130, 246, 1);
+  background: rgba(219, 234, 254, 1);
+  border-color: rgba(59, 130, 246, 0.65);
 }
 
 .tw-loader {
@@ -533,18 +572,18 @@
 }
 
 .tw-table-wrapper::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(241, 245, 249, 1);
 }
 
 .tw-table-wrapper::-webkit-scrollbar-thumb {
-  background: rgba(55, 65, 81, 0.9);
+  background: rgba(148, 163, 184, 0.85);
   border-radius: 999px;
 }
 
 .tw-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(2, 6, 23, 0.8);
+  background: rgba(15, 23, 42, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -554,11 +593,11 @@
 
 .tw-modal {
   width: min(640px, 100%);
-  background: radial-gradient(circle at top left, #111827, #020617);
+  background: rgba(255, 255, 255, 0.98);
   border-radius: 20px;
-  border: 1px solid rgba(148, 163, 184, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.55);
   padding: 20px;
-  box-shadow: 0 25px 60px rgba(2, 6, 23, 0.8);
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.18);
 }
 
 .tw-modal-header {
@@ -571,7 +610,7 @@
 .tw-modal-header h3 {
   margin: 0;
   font-size: 20px;
-  color: #f9fafb;
+  color: #0f172a;
 }
 
 .tw-form-actions--gap {
@@ -608,12 +647,25 @@
     align-items: flex-start;
   }
 
+  .tw-logo-wrap {
+    width: 44px;
+    height: 44px;
+    flex-basis: 44px;
+  }
+
+
   .tw-card {
     padding-inline: 14px;
   }
 
   .tw-form-row {
     flex-direction: column;
+    gap: 6px;
+  }
+
+  .tw-card--auth .tw-form,
+  .tw-card--full .tw-form--inline {
+    gap: 8px;
   }
 
   .tw-summary-grid {

@@ -40,6 +40,8 @@ function Dashboard({ user }) {
   const [chartMode, setChartMode] = useState('monthly'); // 'monthly' | 'yearly'
   const [selectedYear, setSelectedYear] = useState(() => new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(() => new Date().getMonth() + 1); // 1-12
+  const [overviewYear, setOverviewYear] = useState(() => new Date().getFullYear());
+  const [overviewMonth, setOverviewMonth] = useState(() => new Date().getMonth() + 1); // 1-12
 
   const formatDate = (dateStr) => {
     if (!dateStr) return '';
@@ -48,6 +50,14 @@ function Dashboard({ user }) {
     const [year, month, day] = parts;
     return `${day}-${month}-${year}`;
   };
+
+  const monthNames = useMemo(
+    () =>
+      Array.from({ length: 12 }, (_v, i) =>
+        new Date(2000, i, 1).toLocaleString('en', { month: 'long' })
+      ),
+    []
+  );
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -210,12 +220,20 @@ function Dashboard({ user }) {
     }
   };
 
-  const filteredTransactions =
-    filter === 'deleted'
-      ? transactions.filter((t) => t.deleted_at)
-      : transactions
-          .filter((t) => !t.deleted_at)
-          .filter((t) => (filter === 'all' ? true : t.type === filter));
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth() + 1;
+
+  const filteredTransactions = transactions
+    // scope table to the selected Overview month/year
+    .filter((t) => {
+      if (!t.txn_date) return false;
+      const d = new Date(t.txn_date);
+      return d.getFullYear() === overviewYear && d.getMonth() + 1 === overviewMonth;
+    })
+    // then apply Deleted vs non-deleted filter
+    .filter((t) => (filter === 'deleted' ? Boolean(t.deleted_at) : !t.deleted_at))
+    // and apply type filter
+    .filter((t) => (filter === 'all' || filter === 'deleted' ? true : t.type === filter));
 
   const sortedTransactions = [...filteredTransactions].sort((a, b) => {
     const dateA = new Date(a.txn_date).getTime();
@@ -226,21 +244,62 @@ function Dashboard({ user }) {
     return createdB - createdA;
   });
 
-  const totals = transactions
-    .filter((t) => !t.deleted_at)
-    .reduce(
-      (acc, t) => {
-        if (t.type === 'income') {
-          acc.income += Number(t.amount) || 0;
-        } else if (t.type === 'expense') {
-          acc.expense += Number(t.amount) || 0;
-        }
-        return acc;
-      },
-      { income: 0, expense: 0 }
-    );
+  const overviewYearsAvailable = useMemo(() => {
+    const years = new Set([currentYear]);
+    transactions
+      .filter((t) => !t.deleted_at)
+      .forEach((t) => {
+        if (!t.txn_date) return;
+        const y = new Date(t.txn_date).getFullYear();
+        if (y <= currentYear) years.add(y);
+      });
+    return Array.from(years).sort((a, b) => b - a);
+  }, [transactions, currentYear]);
 
-  const balance = totals.income - totals.expense;
+  useEffect(() => {
+    if (!overviewYearsAvailable.includes(overviewYear)) {
+      setOverviewYear(overviewYearsAvailable[0]);
+    }
+  }, [overviewYearsAvailable, overviewYear]);
+
+  const monthlyTotals = useMemo(() => {
+    return transactions
+      .filter((t) => !t.deleted_at)
+      .filter((t) => {
+        if (!t.txn_date) return false;
+        const d = new Date(t.txn_date);
+        return d.getFullYear() === overviewYear && d.getMonth() + 1 === overviewMonth;
+      })
+      .reduce(
+        (acc, t) => {
+          if (t.type === 'income') {
+            acc.income += Number(t.amount) || 0;
+          } else if (t.type === 'expense') {
+            acc.expense += Number(t.amount) || 0;
+          }
+          return acc;
+        },
+        { income: 0, expense: 0 }
+      );
+  }, [transactions, overviewYear, overviewMonth]);
+
+  const monthlyBalance = monthlyTotals.income - monthlyTotals.expense;
+
+  const openingBalance = useMemo(() => {
+    const cutoff = new Date(overviewYear, overviewMonth - 1, 1); // start of selected month
+    return transactions
+      .filter((t) => !t.deleted_at)
+      .filter((t) => {
+        if (!t.txn_date) return false;
+        const d = new Date(t.txn_date);
+        return d.getTime() < cutoff.getTime();
+      })
+      .reduce((acc, t) => {
+        if (t.type === 'income') acc += Number(t.amount) || 0;
+        if (t.type === 'expense') acc -= Number(t.amount) || 0;
+        return acc;
+      }, 0);
+  }, [transactions, overviewYear, overviewMonth]);
 
   const expenseTransactions = useMemo(
     () => transactions.filter((t) => !t.deleted_at && t.type === 'expense'),
@@ -395,18 +454,64 @@ function Dashboard({ user }) {
         </div>
 
         <div className="tw-card tw-card--summary">
-          <h2>Overview</h2>
+          <div className="flex items-center justify-between gap-4">
+            <h2>Overview</h2>
+            <div className="flex items-center gap-3">
+              <div className="hidden sm:inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/90 px-3 py-1 text-xs text-emerald-800">
+                <span className="text-slate-500">Opening</span>
+                <span className={openingBalance >= 0 ? 'text-emerald-700' : 'text-rose-700'}>
+                  ₹{openingBalance.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <select
+                  className="tw-select-inline"
+                  value={overviewYear}
+                  onChange={(e) => {
+                    const nextYear = Number(e.target.value);
+                    const maxMonth = nextYear === currentYear ? currentMonth : 12;
+                    setOverviewYear(nextYear);
+                    setOverviewMonth((prev) => Math.min(prev, maxMonth));
+                  }}
+                  aria-label="Select year"
+                >
+                  {overviewYearsAvailable.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  className="tw-select-inline"
+                  value={overviewMonth}
+                  onChange={(e) => setOverviewMonth(Number(e.target.value))}
+                  aria-label="Select month"
+                >
+                  {(() => {
+                    const maxMonth = overviewYear === currentYear ? currentMonth : 12;
+                    const monthsDesc = Array.from({ length: maxMonth }, (_v, i) => maxMonth - i);
+                    return monthsDesc.map((m) => (
+                      <option key={`${overviewYear}-${m}`} value={m}>
+                        {monthNames[m - 1]}
+                      </option>
+                    ));
+                  })()}
+                </select>
+              </div>
+            </div>
+          </div>
           <div className="tw-summary-grid">
             <div className="tw-summary-item">
               <span className="tw-summary-label">Total income</span>
               <span className="tw-summary-value tw-summary-value--income">
-                ₹{totals.income.toFixed(2)}
+                ₹{monthlyTotals.income.toFixed(2)}
               </span>
             </div>
             <div className="tw-summary-item">
               <span className="tw-summary-label">Total expenses</span>
               <span className="tw-summary-value tw-summary-value--expense">
-                ₹{totals.expense.toFixed(2)}
+                ₹{monthlyTotals.expense.toFixed(2)}
               </span>
             </div>
             <div className="tw-summary-item">
@@ -414,10 +519,12 @@ function Dashboard({ user }) {
               <span
                 className={
                   'tw-summary-value ' +
-                  (balance >= 0 ? 'tw-summary-value--positive' : 'tw-summary-value--negative')
+                  (monthlyBalance >= 0
+                    ? 'tw-summary-value--positive'
+                    : 'tw-summary-value--negative')
                 }
               >
-                ₹{balance.toFixed(2)}
+                ₹{monthlyBalance.toFixed(2)}
               </span>
             </div>
           </div>
@@ -432,8 +539,8 @@ function Dashboard({ user }) {
               {loading
                 ? 'Loading your transactions...'
                 : filteredTransactions.length === 0
-                ? 'No transactions yet. Add your first one above.'
-                : `Showing ${filteredTransactions.length} of ${transactions.length} transactions.`}
+                ? 'No transactions found.'
+                : `Showing ${filteredTransactions.length} transaction(s) for ${monthNames[overviewMonth - 1]} ${overviewYear}.`}
             </p>
           </div>
           <div className="tw-filter-group">
@@ -474,7 +581,7 @@ function Dashboard({ user }) {
           </div>
         </div>
 
-        <div className="tw-table-wrapper">
+        <div className="tw-table-wrapper tw-table-wrapper--transactions">
           <table className="tw-table">
             <thead>
               <tr>
@@ -491,7 +598,7 @@ function Dashboard({ user }) {
               {!loading && sortedTransactions.length === 0 && (
                 <tr>
                   <td colSpan={7} className="tw-empty-row">
-                    No transactions to show.
+                    No transactions found.
                   </td>
                 </tr>
               )}
@@ -621,7 +728,12 @@ function Dashboard({ user }) {
                     <YAxis stroke="#9ca3af" tickFormatter={(v) => `₹${v}`} />
                     <Tooltip
                       formatter={(value) => [`₹${Number(value).toFixed(2)}`, 'Expenses']}
-                      contentStyle={{ backgroundColor: '#020617', borderColor: '#1f2937' }}
+                      contentStyle={{
+                        backgroundColor: 'rgba(255,255,255,0.98)',
+                        borderColor: 'rgba(148,163,184,0.55)',
+                        color: '#0f172a',
+                      }}
+                      labelStyle={{ color: '#475569' }}
                     />
                     <Line
                       type="monotone"
@@ -642,7 +754,12 @@ function Dashboard({ user }) {
                     <YAxis stroke="#9ca3af" tickFormatter={(v) => `₹${v}`} />
                     <Tooltip
                       formatter={(value) => [`₹${Number(value).toFixed(2)}`, 'Expenses']}
-                      contentStyle={{ backgroundColor: '#020617', borderColor: '#1f2937' }}
+                      contentStyle={{
+                        backgroundColor: 'rgba(255,255,255,0.98)',
+                        borderColor: 'rgba(148,163,184,0.55)',
+                        color: '#0f172a',
+                      }}
+                      labelStyle={{ color: '#475569' }}
                     />
                     <Line
                       type="monotone"
@@ -674,11 +791,10 @@ function Dashboard({ user }) {
                     data={categoryPieData}
                     dataKey="value"
                     nameKey="name"
-                    outerRadius="80%"
+                    outerRadius={chartMode === 'yearly' ? 60 : 80}
                     fill="#38bdf8"
-                    label={({ name, percent }) =>
-                      `${name} (${(percent * 100).toFixed(0)}%)`
-                    }
+                    label={false}
+                    labelLine={false}
                   >
                     {categoryPieData.map((entry, index) => (
                       <Cell
@@ -693,14 +809,28 @@ function Dashboard({ user }) {
                       name,
                     ]}
                     contentStyle={{
-                      backgroundColor: '#020617',
-                      borderColor: '#1f2937',
-                      color: '#e5e7eb',
+                      backgroundColor: 'rgba(255,255,255,0.98)',
+                      borderColor: 'rgba(148,163,184,0.55)',
+                      color: '#0f172a',
                     }}
-                    labelStyle={{ color: '#9ca3af' }}
-                    itemStyle={{ color: '#e5e7eb' }}
+                    labelStyle={{ color: '#475569' }}
+                    itemStyle={{ color: '#0f172a' }}
                   />
-                  <Legend wrapperStyle={{ color: '#e5e7eb' }} />
+                  <Legend
+                    layout="horizontal"
+                    align="center"
+                    verticalAlign="bottom"
+                    wrapperStyle={{
+                      color: '#0f172a',
+                      fontSize: 11,
+                      paddingTop: 8,
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      justifyContent: 'center',
+                      maxHeight: 72,
+                      overflowY: 'auto',
+                    }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>
